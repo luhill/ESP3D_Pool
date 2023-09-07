@@ -21,6 +21,7 @@
 #include "command.h"
 #include "wificonf.h"
 #include "webinterface.h"
+#include "pool.h"
 #ifndef FS_NO_GLOBALS
 #define FS_NO_GLOBALS
 #endif
@@ -191,6 +192,32 @@ bool COMMAND::execute_command (int cmd, String cmd_params, tpipe output, level_a
     LOG ("Execute Command\r\n")
     switch (cmd) {
 
+    case 1:
+        parameter = get_param(cmd_params,"",true);
+        if(parameter.toInt()!=0){
+            POOL::setIonPolarityCyclePeriod_ms(parameter.toInt());
+            ESPCOM::print (F ("Delay set"),output,espresponse);
+        }else{
+            ESPCOM::println (INCORRECT_CMD_MSG, output, espresponse);
+        }
+        break;
+    case 2:
+        parameter = get_param(cmd_params,"",true);
+        if(parameter.toInt()!=0){
+            POOL::setChlorineDuty(parameter.toInt());
+            ESPCOM::print (F ("Duty set"),output,espresponse);
+        }else{
+            ESPCOM::println (INCORRECT_CMD_MSG, output, espresponse);
+        }
+        break;
+    case 3:
+        //ESP_IONIZER::setupClock();
+        time_t now;
+        time(&now);
+        struct tm lTime;
+        localtime_r(&now,&lTime);
+		ESPCOM::println(asctime(&lTime),output,espresponse);
+        break;
     //STA SSID
     //[ESP100]<SSID>[pwd=<admin password>]
     case 100:

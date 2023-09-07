@@ -19,18 +19,17 @@
 */
 //library include
 #include "esp3d.h"
-
+#include "pool.h"
 //global variable
 Esp3D myesp3d;
 
 //Setup
-void setup()
-{
+void setup(){
     myesp3d.begin();
+    POOL::setup();
 }
 
 //main loop
-void loop()
-{
+void loop(){
     myesp3d.process();
 }
