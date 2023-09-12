@@ -300,6 +300,7 @@ typedef enum {
 } level_authenticate_type;
 
 
+
 #define    NO_SD 0
 #define    SD_DIRECTORY 1
 #define    EXT_DIRECTORY 2
@@ -351,7 +352,7 @@ typedef enum {
 #define EP_TARGET_FW        461 //1  bytes = flag
 #define EP_TIMEZONE         462//1  bytes = flag
 #define EP_TIME_ISDST       463//1  bytes = flag
-#define EP_TIME_SERVER1 464//128 bytes 127+1 = string  ; warning does not support multibyte char like chinese  
+#define EP_TIME_SERVER1 464//128 bytes 127+1 = string  ; warning does not support multibyte char like chinese
 #define EP_TIME_SERVER2  593 //128 bytes 127+1 = string  ; warning does not support multibyte char like chinese
 #define EP_TIME_SERVER3  722 //128 bytes 127+1 = string  ; warning does not support multibyte char like chinese
 #define EP_IS_DIRECT_SD   850//1  bytes = flag
@@ -360,10 +361,15 @@ typedef enum {
 #define EP_DIRECT_SD_CHECK   853//1  bytes = flag
 #define EP_SD_CHECK_UPDATE_AT_BOOT   854//1  bytes = flag
 #define ESP_NOTIFICATION_SETTINGS 855//128 bytes 127+1 = string  ; warning does not support multibyte char like chinese
-
+#define POOL_PARAMETERS_ADDRESS 983// 15 bytes = custom struct
+//#define POOL_START_TIME 983//4 bytes = int
+//#define POOL_STOP_TIME 987//4 bytes = int
+//#define POOL_AUTO_MODE 991//1 byte = flag
+//#define POOL_CHLORINE_DUTY 992//4 bytes = int
+//#define POOL_ION_DUTY 996//4 bytes = int
 #define EP_EEPROM_VERSION 1017// 6 bytes = ESP3D<V on one byte>
 
-#define LAST_EEPROM_ADDRESS 983
+#define LAST_EEPROM_ADDRESS 983+POOL_SETTINGS_SIZE_BYTES
 
 //default values
 #define DEFAULT_WIFI_MODE           AP_MODE

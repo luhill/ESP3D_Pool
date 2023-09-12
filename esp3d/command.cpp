@@ -191,32 +191,134 @@ bool COMMAND::execute_command (int cmd, String cmd_params, tpipe output, level_a
     String parameter;
     LOG ("Execute Command\r\n")
     switch (cmd) {
-
-    case 1:
+    case 1://Auto Mode
         parameter = get_param(cmd_params,"",true);
-        if(parameter.toInt()!=0){
-            POOL::setIonPolarityCyclePeriod_ms(parameter.toInt());
-            ESPCOM::print (F ("Delay set"),output,espresponse);
+        if(parameter==""){
+            parameter = String(POOL::setAutoMode(2));
         }else{
-            ESPCOM::println (INCORRECT_CMD_MSG, output, espresponse);
+            parameter = String(POOL::setAutoMode(parameter.toInt()));
+        }
+        ESPCOM::print(parameter,output,espresponse);
+        break;
+    case 2://Pump on off
+        parameter = get_param(cmd_params,"",true);
+        if(parameter==""){
+            parameter = String(POOL::getPumpStatus());
+        }else{
+            parameter = String(POOL::pumpOnOff(parameter.toInt()));
+        }
+        ESPCOM::print(parameter,output,espresponse);
+        break;
+    case 3://chlorine on off
+         parameter = get_param(cmd_params,"",true);
+        if(parameter==""){
+            parameter = String(POOL::getChlorineStatus());
+        }else{
+            parameter = String(POOL::chlorineOnOff(parameter.toInt()));
+        }
+        ESPCOM::print (parameter,output,espresponse);
+        break;
+    case 4://ion on off
+         parameter = get_param(cmd_params,"",true);
+        if(parameter==""){
+            parameter = String(POOL::getIonStatus());
+        }else{
+            parameter = String(POOL::ionOnOff(parameter.toInt()));
+        }
+        ESPCOM::print(parameter,output,espresponse);
+        break;
+    case 5://chlorine duty
+        parameter = get_param(cmd_params,"",true);
+        if(parameter==""){
+            parameter = POOL::getChlorineDuty();
+            ESPCOM::print(parameter,output,espresponse);
+        }else{
+            if((parameter+"1").toInt()!=0){//toInt() returns 0 if there is an error. +1 ensures 0 only represents errors
+                POOL::setChlorineDuty(parameter.toInt());
+                ESPCOM::println (F ("Chlorine duty set"),output,espresponse);
+            }else{
+                ESPCOM::println (INCORRECT_CMD_MSG, output, espresponse);
+            }
         }
         break;
-    case 2:
+    case 6://ion duty
         parameter = get_param(cmd_params,"",true);
-        if(parameter.toInt()!=0){
-            POOL::setChlorineDuty(parameter.toInt());
-            ESPCOM::print (F ("Duty set"),output,espresponse);
+        if(parameter==""){
+            parameter = POOL::getIonDuty();
+            ESPCOM::print(parameter,output,espresponse);
         }else{
-            ESPCOM::println (INCORRECT_CMD_MSG, output, espresponse);
+            if(parameter.toInt()!=0){
+                POOL::setIonDuty(parameter.toInt());
+                ESPCOM::println (F ("Ion duty set"),output,espresponse);
+            }else{
+                ESPCOM::println (INCORRECT_CMD_MSG, output, espresponse);
+            }
         }
         break;
-    case 3:
-        //ESP_IONIZER::setupClock();
+    case 7://current time
+        parameter = get_param(cmd_params,"",true);
+        if(parameter!=""){
+            const char* st = parameter.c_str();
+            POOL::setDateTime(st);
+            //ESPCOM::println (F ("Time set"),output,espresponse);
+        }
         time_t now;
         time(&now);
         struct tm lTime;
         localtime_r(&now,&lTime);
-		ESPCOM::println(asctime(&lTime),output,espresponse);
+        char dts[22];
+        strftime(dts, sizeof(dts), "%Y-%m-%dT%X", &lTime);
+        ESPCOM::print(dts,output,espresponse);
+        break;
+    case 8://start time
+        parameter = get_param(cmd_params,"",true);
+        if(parameter==""){//fetch time
+            parameter = POOL::getStartTime();
+            ESPCOM::print(parameter,output,espresponse);
+        }else{//set time
+            const char* st = parameter.c_str();
+            POOL::setStartTime(st);
+            ESPCOM::println (F ("Start time set"),output,espresponse);
+        }
+        break;
+    case 9://stop time
+        parameter = get_param(cmd_params,"",true);
+        if(parameter==""){//fetch time
+            parameter = POOL::getStopTime();
+            ESPCOM::print(parameter,output,espresponse);
+        }else{//set time
+            const char* st = parameter.c_str();
+            POOL::setStopTime(st);
+            ESPCOM::println (F ("Stop time set"),output,espresponse);
+        }
+        break;
+    case 10://chlorine reverse cycle period
+        parameter = get_param(cmd_params,"",true);
+        if(parameter==""){
+            parameter = POOL::getChlorineCyclePeriod();
+            ESPCOM::print(parameter,output,espresponse);
+        }else{
+            if(parameter.toInt()!=0){
+                POOL::setChlorineCyclePeriod(parameter.toInt());
+                ESPCOM::println (F ("Chlorine cycle period set"),output,espresponse);
+            }else{
+                ESPCOM::println (INCORRECT_CMD_MSG, output, espresponse);
+            }
+        }
+        break;
+    case 11://ion reverse cycle period
+        parameter = get_param(cmd_params,"",true);
+        if(parameter==""){
+            parameter = POOL::getIonCyclePeriod();
+            ESPCOM::print(parameter,output,espresponse);
+        }else{
+            if(parameter.toInt()!=0){
+                POOL::setIonCyclePeriod(parameter.toInt());
+                ESPCOM::println (F ("Ion cycle period set"),output,espresponse);
+            }else{
+                ESPCOM::println (INCORRECT_CMD_MSG, output, espresponse);
+            }
+        }
         break;
     //STA SSID
     //[ESP100]<SSID>[pwd=<admin password>]
